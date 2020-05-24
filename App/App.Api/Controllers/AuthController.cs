@@ -1,6 +1,7 @@
 ﻿using App.Core.Response;
 using App.Data.Models;
 using App.Entity;
+using App.Service;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -8,9 +9,10 @@ namespace App.Api.Controllers
 {
     public class AuthController : BaseController
     {
-        public AuthController()
+        private readonly UserService _userService;
+        public AuthController(UserService userService)
         {
-
+            _userService = userService;
         }
 
         [HttpPost]
@@ -29,6 +31,12 @@ namespace App.Api.Controllers
         public async Task<ServiceResponse<TokenModel>> Login([FromBody] LoginModel model)
         {
             return new ServiceResponse<TokenModel>();
+        }
+
+        [HttpPost]
+        public async Task<ServiceResponse<User>> Me(string email)
+        {
+            return await _userService.GetUser(email);
         }
     }
 }

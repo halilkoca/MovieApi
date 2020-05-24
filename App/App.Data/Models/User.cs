@@ -1,6 +1,8 @@
-﻿namespace App.Data.Models
+﻿using App.Core;
+
+namespace App.Data.Models
 {
-    public class User
+    public class User : BaseEntity
     {
         public int Id { get; set; }
         public string Email { get; set; }

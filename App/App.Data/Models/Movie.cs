@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using App.Core;
 
 namespace App.Data.Models
 {
-    public class Movie
+    public class Movie : BaseEntity
     {
         public int Id { get; set; }
 

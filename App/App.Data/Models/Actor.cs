@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace App.Data.Models
 {
-    public class Actor
+    public class Actor : BaseEntity
     {
         public int Id { get; set; }
         public int MovieId { get; set; }

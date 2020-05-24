@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using App.Core;
 using System.ComponentModel.DataAnnotations;
 
 namespace App.Data.Models
 {
-    public class Genre
+    public class Genre : BaseEntity
     {
         public int Id { get; set; }
         [Required(ErrorMessage = "This field is required")]
