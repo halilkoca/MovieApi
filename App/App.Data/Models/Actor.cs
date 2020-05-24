@@ -1,4 +1,5 @@
-﻿using System;
+﻿using App.Core;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 

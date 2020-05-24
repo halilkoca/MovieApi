@@ -172,43 +172,7 @@ namespace App.Data
             }
         }
 
-        public virtual void Delete(TEntity entity)
-        {
-            if (entity == null)
-                throw new ArgumentNullException(nameof(entity));
-
-            try
-            {
-                entity.IsDeleted = true;
-                Update(entity);
-            }
-            catch (DbUpdateException exception)
-            {
-                //ensure that the detailed error text is saved in the Log
-                throw new Exception(GetFullErrorTextAndRollbackEntityChanges(exception), exception);
-            }
-        }
-
-        public virtual void Delete(IEnumerable<TEntity> entities)
-        {
-            if (entities == null)
-                throw new ArgumentNullException(nameof(entities));
-
-            try
-            {
-                foreach (var item in entities)
-                    item.IsDeleted = true;
-                Update(entities);
-
-            }
-            catch (DbUpdateException exception)
-            {
-                //ensure that the detailed error text is saved in the Log
-                throw new Exception(GetFullErrorTextAndRollbackEntityChanges(exception), exception);
-            }
-        }
-
-        public void DeleteR(TEntity entity)
+        public void Delete(TEntity entity)
         {
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
@@ -225,7 +189,7 @@ namespace App.Data
             }
         }
 
-        public void DeleteR(IEnumerable<TEntity> entities)
+        public void Delete(IEnumerable<TEntity> entities)
         {
             if (entities == null)
                 throw new ArgumentNullException(nameof(entities));

@@ -33,7 +33,7 @@ namespace App.Api.Controllers
             return new ServiceResponse<TokenModel>();
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<ServiceResponse<User>> Me(string email)
         {
             return await _userService.GetUser(email);
