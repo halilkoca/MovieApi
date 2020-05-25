@@ -20,7 +20,9 @@ namespace App.Service.DependencyResolvers
 
         void RegisterProduction(IServiceCollection services)
         {
-            services.AddTransient(typeof(IUserService), typeof(UserService));
+            services.AddTransient(typeof(IActorService), typeof(ActorService));
+            services.AddTransient(typeof(IGenreService), typeof(GenreService));
+            services.AddTransient(typeof(IMovieService), typeof(MovieService));
         }
     }
 }

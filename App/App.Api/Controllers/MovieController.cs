@@ -18,19 +18,26 @@ namespace App.Api.Controllers
             _movieService = movieService;
         }
 
-        // GET: api/Movie
+        /// <summary>
+        /// Filter Paging Movies
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpGet]
-        public async Task<ServiceResponse<List<Movie>>> Get(MovieFilter request)
+        public async Task<ServiceResponse<List<Movie>>> Get([FromQuery]MovieFilter request)
         {
             return await _movieService.Get(request);
         }
 
-        [HttpGet("{id}", Name = "Get")]
+        /// <summary>
+        /// Get one movie with id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
         public async Task<ServiceResponse<Movie>> Get(int id)
         {
             return await _movieService.Get(id);
         }
-
-
     }
 }
