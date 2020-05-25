@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Text.Json.Serialization;
 
 namespace App.Entity.Filters
 {
@@ -10,7 +9,9 @@ namespace App.Entity.Filters
         public int[] Genres { get; set; }
 
         public string PriceRange { get; set; }
+        [JsonIgnore]
         public decimal PriceMin { get => PriceRange != null ? Convert.ToDecimal(PriceRange.Split(';')[0]) : 0; }
+        [JsonIgnore]
         public decimal PriceMax { get => PriceRange != null ? Convert.ToDecimal(PriceRange.Split(';')[1]) : 0; }
     }
 }
