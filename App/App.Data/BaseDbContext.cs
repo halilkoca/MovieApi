@@ -1,7 +1,13 @@
 ﻿using App.Core.Entities;
 using App.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.ValueGeneration;
 using Microsoft.Extensions.Configuration;
+using System.Linq;
+using System.Threading;
 
 namespace App.Data
 {
@@ -21,7 +27,7 @@ namespace App.Data
             this.configuration = configuration;
         }
 
-        public BaseDbContext(DbContextOptions<InMemoryContext> options)
+        public BaseDbContext(DbContextOptions<BaseDbContext> options)
             : base(options)
         {
         }
@@ -44,19 +50,68 @@ namespace App.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Movie>()
-               .HasMany(c => c.Actors);
+            modelBuilder.Entity<Movie>(rr =>
+            {
+                rr.HasKey(e => e.Id);
+                rr.HasMany(e => e.Actors);
+                rr.HasMany(e => e.Genres);
+            });
 
-            modelBuilder.Entity<Actor>()
-               .HasMany(c => c.Movies);
+            modelBuilder.Entity<Actor>(rr =>
+            {
+                rr.HasKey(e => e.Id);
+                rr.HasMany(c => c.Movies);
+            });
 
-            modelBuilder.Entity<Movie>()
-               .HasMany(c => c.Genres);
+            modelBuilder.Entity<User>(rr =>
+            {
+                rr.HasMany(a => a.OperationClaims);
+            });
 
-            modelBuilder.Entity<User>()
-               .HasMany(c => c.OperationClaims);
+            modelBuilder.Entity<Genre>(rr =>
+            {
+                rr.HasKey(e => e.Id);
+            });
 
-
+            modelBuilder.Entity<OperationClaim>(rr =>
+            {
+                rr.HasKey(e => e.Id);
+            });
         }
+
+        
+    }
+
+    public static class DbContextExtensions
+    {
+        public static void ResetValueGenerators(this DbContext context)
+        {
+            var cache = context.GetService<IValueGeneratorCache>();
+
+            foreach (var keyProperty in context.Model.GetEntityTypes()
+                .Select(e => e.FindPrimaryKey().Properties[0])
+                .Where(p => p.ClrType == typeof(int)
+                            && p.ValueGenerated == ValueGenerated.OnAdd))
+            {
+                var generator = (ResettableValueGenerator)cache.GetOrAdd(
+                    keyProperty,
+                    keyProperty.DeclaringEntityType,
+                    (p, e) => new ResettableValueGenerator());
+
+                generator.Reset();
+            }
+        }
+    }
+
+    public class ResettableValueGenerator : ValueGenerator<int>
+    {
+        private int _current;
+
+        public override bool GeneratesTemporaryValues => false;
+
+        public override int Next(EntityEntry entry)
+            => Interlocked.Increment(ref _current);
+
+        public void Reset() => _current = 0;
     }
 }

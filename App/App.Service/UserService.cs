@@ -1,8 +1,8 @@
 ﻿using App.Core.DbTrackers;
 using App.Core.Entities;
 using App.Core.Response;
-using App.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace App.Service
@@ -41,11 +41,10 @@ namespace App.Service
 
         public async Task<ServiceResponse<User>> InsertUser(User user)
         {
-            var nUser = _userRepo.Get(x => x.Email == user.Email);
-            if (nUser != null)
-            {
-                return new ServiceResponse<User>(false, "User found");
-            }
+            var nUser = _userRepo.Table.FirstOrDefault(x => x.Email == user.Email);
+            if (nUser != null) return new ServiceResponse<User>(false, "UserExist");
+            var newID = _userRepo.Table.Select(x => x.Id).Max() + 1;
+            user.Id = newID;
             await _userRepo.Insert(user);
             return new ServiceResponse<User>(user, true);
         }

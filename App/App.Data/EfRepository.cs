@@ -16,7 +16,7 @@ namespace App.Data
     {
         #region Fields
 
-        private readonly InMemoryContext _context;
+        private readonly BaseDbContext _context;
 
         private DbSet<TEntity> _entities;
 
@@ -24,7 +24,7 @@ namespace App.Data
 
         #region Ctor
 
-        public EfRepository(InMemoryContext context)
+        public EfRepository(BaseDbContext context)
         {
             if (_context == null)
                 _context = context;

@@ -10,15 +10,12 @@ namespace App.Api
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
-
             var host = CreateHostBuilder(args).Build();
 
             using (var scope = host.Services.CreateScope())
             {
                 // Get the instance of DbContext in our services layer
                 var services = scope.ServiceProvider;
-                var context = services.GetRequiredService<InMemoryContext>();
 
                 // Call the DataGenerator to create sample data
                 DataGenerator.Initialize(services);

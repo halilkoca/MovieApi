@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.IO;
 using System.Text.Json.Serialization;
 
@@ -36,7 +37,8 @@ namespace App.Api
                     builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             });
 
-            services.AddDbContext<InMemoryContext>(options => options.UseInMemoryDatabase(databaseName: "InMemory"));
+            services.AddDbContext<BaseDbContext>(c =>
+                c.UseInMemoryDatabase(Guid.NewGuid().ToString()).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
 
             var tokenOptions = _configuration.GetSection("TokenOptions").Get<TokenOptions>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

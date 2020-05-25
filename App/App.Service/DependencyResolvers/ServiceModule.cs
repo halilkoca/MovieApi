@@ -12,7 +12,7 @@ namespace App.Service.DependencyResolvers
         public void Load(IServiceCollection services, IConfiguration configuration)
         {
             services.AddTransient(typeof(IRepository<>), typeof(EfRepository<>));
-            services.AddScoped<InMemoryContext>();
+            services.AddScoped<BaseDbContext>();
             services.AddTransient<FileLogger>();
 
             RegisterProduction(services);

@@ -6,6 +6,7 @@ using App.Data.Models;
 using App.Entity;
 using App.Service;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace App.Api.Controllers
@@ -28,13 +29,25 @@ namespace App.Api.Controllers
         [HttpPost("Register")]
         public async Task<ServiceResponse<TokenModel>> Register([FromBody] RegisterModel model)
         {
+            var userExits = await _userService.GetUser(model.Email);
+            if (userExits.Data != null)
+                return new ServiceResponse<TokenModel>(false, "UserExist");
+
+            HashingHelper.CreatePasswordHash(model.Password, out byte[] passwordSalt, out byte[] passwordHash);
+
             var user = new User
             {
                 Email = model.Email,
-                PasswordHash = new byte[0]
+                FullName = model.FullName,
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt,
+                OperationClaims = new List<OperationClaim> { new OperationClaim { Id = 2, Name = "Client" } }
             };
 
-            return new ServiceResponse<TokenModel>();
+            await _userService.InsertUser(user);
+            var accessToken = _tokenHelper.CreateToken(user);
+
+            return new ServiceResponse<TokenModel>(accessToken, true);
         }
 
         [HttpPost("Login")]
