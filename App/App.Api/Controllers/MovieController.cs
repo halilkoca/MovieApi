@@ -1,22 +1,34 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using App.Core.Response;
+using App.Data.Models;
+using App.Entity.Filters;
+using App.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Api.Controllers
 {
     public class MovieController : BaseController
     {
-        // GET: api/Movie
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IMovieService _movieService;
+        public MovieController(
+            IMovieService movieService
+            )
         {
-            return new string[] { "value1", "value2" };
+            _movieService = movieService;
         }
 
-        // GET: api/Movie/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
+        // GET: api/Movie
+        [HttpGet]
+        public async Task<ServiceResponse<List<Movie>>> Get(MovieFilter request)
         {
-            return "value";
+            return await _movieService.Get(request);
+        }
+
+        [HttpGet("{id}", Name = "Get")]
+        public async Task<ServiceResponse<Movie>> Get(int id)
+        {
+            return await _movieService.Get(id);
         }
 
 

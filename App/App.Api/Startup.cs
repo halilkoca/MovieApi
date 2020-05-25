@@ -1,5 +1,6 @@
 using App.Core.DependencyResolvers;
 using App.Core.Extensions;
+using App.Core.Middleware;
 using App.Core.Utilities.IoC;
 using App.Core.Utilities.Jwt;
 using App.Core.Utilities.Security;
@@ -81,6 +82,8 @@ namespace App.Api
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
                 c.RoutePrefix = string.Empty;
             });
+
+            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
 
             if (env.IsDevelopment())
             {
