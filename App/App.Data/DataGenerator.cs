@@ -78,7 +78,6 @@ namespace App.Data
                         ReleaseDate = new DateTime(1971, 2, 2),
                         Description = "An animated story of an unusual kingdom in which everything and everybody is pointed - except for a young boy named Oblio. Despite his round head, Oblio has many friends. But an evil count, jealous that Oblio is more popular than his own son, says that without a pointed head, Oblio is an outlaw. Along with his faithful dog Arrow, Oblio is exiled to the Pointless Forest. There, he has many fantastic experiences (including encounters with a 3-headed man, giant bees, a tree in the leaf-selling business, and a good-humored old rock). From his adventures, Oblio learns that it is not at all necessary to be pointed to have a point in life. Music composed and performed by Harry Nilsson ('Me and My Arrow'), who also wrote the story. ",
                         ImdbLink = "http://www.imdb.com/title/tt0067595/",
-                        Actors = new List<Actor>(),
                     },
                     new Movie
                     {
@@ -193,15 +192,66 @@ namespace App.Data
                     new User { Id = 2, Email = "user@example.com", PasswordHash = passwordHash, PasswordSalt = passwordSalt }
                 );
 
-                // Look for any User already in database.
-                if (context.OperationClaim.Any())
+                // Look for any UserClaim already in database.
+                if (context.UserClaim.Any())
                 {
                     return;   // Database has been seeded
                 }
 
-                context.OperationClaim.AddRange(
-                    new OperationClaim { Id = 1, Name = "Admin" },
-                    new OperationClaim { Id = 2, Name = "Client" }
+                context.UserClaim.AddRange(
+                    new UserClaim { Id = 1, UserId = 1, OClaimId = 1 },
+                    new UserClaim { Id = 2, UserId = 2, OClaimId = 2 }
+                );
+
+                // Look for any User already in database.
+                if (context.OClaim.Any())
+                {
+                    return;   // Database has been seeded
+                }
+
+                context.OClaim.AddRange(
+                    new OClaim { Id = 1, Name = "Admin" },
+                    new OClaim { Id = 2, Name = "Client" }
+                );
+
+                // Look for any MovieActor already in database.
+                if (context.MovieActor.Any())
+                {
+                    return;   // Database has been seeded
+                }
+
+                context.MovieActor.AddRange(
+                    new MovieActor { Id = 1, MovieId = 1, ActorId = 1 },
+                    new MovieActor { Id = 2, MovieId = 1, ActorId = 2 },
+                    new MovieActor { Id = 3, MovieId = 2, ActorId = 1 },
+                    new MovieActor { Id = 4, MovieId = 2, ActorId = 2 },
+                    new MovieActor { Id = 5, MovieId = 3, ActorId = 3 },
+                    new MovieActor { Id = 6, MovieId = 4, ActorId = 4 },
+                    new MovieActor { Id = 7, MovieId = 5, ActorId = 5 },
+                    new MovieActor { Id = 8, MovieId = 6, ActorId = 6 }
+                );
+
+                // Look for any MovieGenre already in database.
+                if (context.MovieGenre.Any())
+                {
+                    return;   // Database has been seeded
+                }
+
+                context.MovieGenre.AddRange(
+                    new MovieGenre { Id = 1, MovieId = 1, GenreId = 1 },
+                    new MovieGenre { Id = 2, MovieId = 1, GenreId = 2 },
+                    new MovieGenre { Id = 3, MovieId = 1, GenreId = 3 },
+
+                    new MovieGenre { Id = 4, MovieId = 2, GenreId = 1 },
+                    new MovieGenre { Id = 5, MovieId = 2, GenreId = 2 },
+                    new MovieGenre { Id = 6, MovieId = 2, GenreId = 3 },
+
+                    new MovieGenre { Id = 7, MovieId = 3, GenreId = 3 },
+                    new MovieGenre { Id = 8, MovieId = 3, GenreId = 4 },
+
+                    new MovieGenre { Id = 9, MovieId = 4, GenreId = 4 },
+                    new MovieGenre { Id = 10, MovieId = 5, GenreId = 5 },
+                    new MovieGenre { Id = 11, MovieId = 6, GenreId = 6 }
                 );
 
                 context.SaveChanges();

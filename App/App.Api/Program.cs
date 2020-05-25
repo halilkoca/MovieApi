@@ -16,6 +16,7 @@ namespace App.Api
             {
                 // Get the instance of DbContext in our services layer
                 var services = scope.ServiceProvider;
+                var context = services.GetRequiredService<BaseDbContext>();
 
                 // Call the DataGenerator to create sample data
                 DataGenerator.Initialize(services);

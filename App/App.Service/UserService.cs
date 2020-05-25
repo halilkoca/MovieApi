@@ -17,15 +17,17 @@ namespace App.Service
     public class UserService : IUserService
     {
         private readonly IRepository<User> _userRepo;
+        private readonly IRepository<UserClaim> _userClaimRepo;
         public UserService(
-            IRepository<User> userRepo
+            IRepository<User> userRepo, IRepository<UserClaim> userClaimRepo
             )
         {
             _userRepo = userRepo;
+            _userClaimRepo = userClaimRepo;
         }
         public async Task<ServiceResponse<User>> GetUser(string email)
         {
-            return new ServiceResponse<User>(await _userRepo.Table.Include(a => a.OperationClaims).FirstOrDefaultAsync(x => x.Email == email), true);
+            return new ServiceResponse<User>(await _userRepo.Table.Include(a => a.UserClaims).FirstOrDefaultAsync(x => x.Email == email), true);
         }
 
         public ServiceResponse<User> UpdateUser(User user)
@@ -43,9 +45,16 @@ namespace App.Service
         {
             var nUser = _userRepo.Table.FirstOrDefault(x => x.Email == user.Email);
             if (nUser != null) return new ServiceResponse<User>(false, "UserExist");
-            var newID = _userRepo.Table.Select(x => x.Id).Max() + 1;
-            user.Id = newID;
+            var newId = _userRepo.Table.Select(x => x.Id).Max() + 1;
+            user.Id = newId;
             await _userRepo.Insert(user);
+
+            // add default claim
+            var newIdd = _userClaimRepo.Table.Select(x => x.Id).Max() + 1;
+            await _userClaimRepo.Insert(new UserClaim { Id = newIdd, OClaimId = 2, UserId = newId });
+
+            user = await _userRepo.Table.Include(a => a.UserClaims).ThenInclude(o => o.OClaim).FirstOrDefaultAsync(a => a.Id == newId);
+
             return new ServiceResponse<User>(user, true);
         }
 

@@ -73,7 +73,7 @@ namespace App.Core.Utilities.Jwt
             claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
             claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
             claims.Add(new Claim(ClaimTypes.Name, $"{user.FullName}"));
-            user.OperationClaims.Select(c => c.Name).ToList().ForEach(role => claims.Add(new Claim(ClaimTypes.Role, role)));
+            user.UserClaims.Select(c => c.OClaim.Name).ToList().ForEach(role => claims.Add(new Claim(ClaimTypes.Role, role)));
             return claims;
         }
     }

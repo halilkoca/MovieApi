@@ -37,8 +37,7 @@ namespace App.Api
                     builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             });
 
-            services.AddDbContext<BaseDbContext>(c =>
-                c.UseInMemoryDatabase(Guid.NewGuid().ToString()).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
+            services.AddDbContext<BaseDbContext>(options => options.UseInMemoryDatabase(databaseName: "BoardGames"));
 
             var tokenOptions = _configuration.GetSection("TokenOptions").Get<TokenOptions>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

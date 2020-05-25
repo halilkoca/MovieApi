@@ -9,6 +9,6 @@ namespace App.Core.Entities
         public byte[] PasswordSalt { get; set; }
         public byte[] PasswordHash { get; set; }
         public string FullName { get; set; }
-        public virtual ICollection<OperationClaim> OperationClaims { get; set; }
+        public virtual ICollection<UserClaim> UserClaims { get; set; }
     }
 }

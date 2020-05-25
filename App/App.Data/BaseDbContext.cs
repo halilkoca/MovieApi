@@ -41,10 +41,13 @@ namespace App.Data
         }
 
         public DbSet<User> User { get; set; }
-        public DbSet<OperationClaim> OperationClaim { get; set; }
+        public DbSet<OClaim> OClaim { get; set; }
         public DbSet<Movie> Movie { get; set; }
         public DbSet<Genre> Genre { get; set; }
         public DbSet<Actor> Actor { get; set; }
+        public DbSet<MovieActor> MovieActor { get; set; }
+        public DbSet<MovieGenre> MovieGenre { get; set; }
+        public DbSet<UserClaim> UserClaim { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -65,7 +68,7 @@ namespace App.Data
 
             modelBuilder.Entity<User>(rr =>
             {
-                rr.HasMany(a => a.OperationClaims);
+                rr.HasMany(a => a.UserClaims);
             });
 
             modelBuilder.Entity<Genre>(rr =>
@@ -73,7 +76,7 @@ namespace App.Data
                 rr.HasKey(e => e.Id);
             });
 
-            modelBuilder.Entity<OperationClaim>(rr =>
+            modelBuilder.Entity<OClaim>(rr =>
             {
                 rr.HasKey(e => e.Id);
             });

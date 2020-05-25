@@ -40,8 +40,7 @@ namespace App.Api.Controllers
                 Email = model.Email,
                 FullName = model.FullName,
                 PasswordHash = passwordHash,
-                PasswordSalt = passwordSalt,
-                OperationClaims = new List<OperationClaim> { new OperationClaim { Id = 2, Name = "Client" } }
+                PasswordSalt = passwordSalt
             };
 
             await _userService.InsertUser(user);
