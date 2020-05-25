@@ -2,11 +2,12 @@
 using App.Core.Response;
 using App.Core.Utilities.Jwt;
 using App.Core.Utilities.Security;
-using App.Data.Models;
 using App.Entity;
 using App.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace App.Api.Controllers
@@ -56,7 +57,7 @@ namespace App.Api.Controllers
             if (user == null)
                 return new ServiceResponse<TokenModel>(false, "UserDoesNotExist");
 
-            if (!HashingHelper.VerifyPasswordHash(model.Password, user.Data.PasswordHash, user.Data.PasswordSalt))
+            if (!HashingHelper.VerifyPasswordHash(model.Password, user.Data.PasswordSalt, user.Data.PasswordHash))
                 return new ServiceResponse<TokenModel>(false, "EmailOrPasswordError");
 
             var accessToken = _tokenHelper.CreateToken(user.Data);
@@ -64,10 +65,13 @@ namespace App.Api.Controllers
             return new ServiceResponse<TokenModel>(accessToken, true);
         }
 
+        [Authorize]
         [HttpGet("Me")]
-        public async Task<ServiceResponse<User>> Me(string email)
+        public async Task<ServiceResponse<UserModel>> Me()
         {
-            return await _userService.GetUser(email);
+            string email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
+            var user = await _userService.GetUser(email);
+            return new ServiceResponse<UserModel>(new UserModel { Id = user.Data.Id, FullName = user.Data.FullName }, true);
         }
     }
 }

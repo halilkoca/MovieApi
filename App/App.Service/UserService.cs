@@ -27,7 +27,7 @@ namespace App.Service
         }
         public async Task<ServiceResponse<User>> GetUser(string email)
         {
-            return new ServiceResponse<User>(await _userRepo.Table.Include(a => a.UserClaims).FirstOrDefaultAsync(x => x.Email == email), true);
+            return new ServiceResponse<User>(await _userRepo.Table.Include(a => a.UserClaims).ThenInclude(b => b.OClaim).FirstOrDefaultAsync(x => x.Email == email), true);
         }
 
         public ServiceResponse<User> UpdateUser(User user)

@@ -56,8 +56,8 @@ namespace App.Api
                 });
 
             services.AddControllers()
-                .AddJsonOptions(options =>
-             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+                .AddJsonOptions(opt => opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()))
+                .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.AddDependencyResolvers(_configuration, new ICoreModule[]
             {
