@@ -1,8 +1,11 @@
-﻿using App.Data.Models;
+﻿using App.Core.Entities;
+using App.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace App.Data
@@ -253,8 +256,19 @@ namespace App.Data
                 }
 
                 context.User.AddRange(
-                    new User { Id = 1, Email = "admin@admin.com", Password = "a.A123" },
-                    new User { Id = 2, Email = "user@user.com", Password = "a.A123" }
+                    new User { Id = 1, Email = "admin@admin.com", PasswordHash = new byte[0], OperationClaims = new Collection<OperationClaim> { new OperationClaim { Id = 1 } } },
+                    new User { Id = 2, Email = "user@example.com", PasswordHash = new byte[0], OperationClaims = new Collection<OperationClaim> { new OperationClaim { Id = 2 } } }
+                );
+
+                // Look for any User already in database.
+                if (context.OperationClaim.Any())
+                {
+                    return;   // Database has been seeded
+                }
+
+                context.OperationClaim.AddRange(
+                    new OperationClaim { Id = 1, Name = "Admin" },
+                    new OperationClaim { Id = 2, Name = "Client" }
                 );
 
                 context.SaveChanges();

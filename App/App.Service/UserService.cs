@@ -1,6 +1,7 @@
-﻿using App.Core.Response;
+﻿using App.Core.DbTrackers;
+using App.Core.Entities;
+using App.Core.Response;
 using App.Data;
-using App.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
@@ -15,10 +16,16 @@ namespace App.Service
 
     public class UserService : IUserService
     {
-        private readonly EfRepository<User> _userRepo;
+        private readonly IRepository<User> _userRepo;
+        public UserService(
+            IRepository<User> userRepo
+            )
+        {
+            _userRepo = userRepo;
+        }
         public async Task<ServiceResponse<User>> GetUser(string email)
         {
-            return new ServiceResponse<User>(await _userRepo.Table.FirstOrDefaultAsync(x => x.Email == email), true);
+            return new ServiceResponse<User>(await _userRepo.Table.Include(a => a.OperationClaims).FirstOrDefaultAsync(x => x.Email == email), true);
         }
 
         public ServiceResponse<User> UpdateUser(User user)
@@ -42,5 +49,7 @@ namespace App.Service
             await _userRepo.Insert(user);
             return new ServiceResponse<User>(user, true);
         }
+
+
     }
 }

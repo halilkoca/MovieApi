@@ -2,7 +2,8 @@
 
 namespace App.Api.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Produces("application/json")]
+    [Route("api/[controller]")]
     [ApiController]
     public class BaseController : ControllerBase
     {

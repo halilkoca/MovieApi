@@ -31,7 +31,7 @@ namespace App.Data.Models
         public string ImdbLink { get; set; }
         public string ImageUrl { get; set; }
         public string VideoUrl { get; set; }
-        public List<Genre> Genres { get; set; }
-        public virtual List<Actor> Actors { get; set; }
+        public virtual ICollection<Genre> Genres { get; set; }
+        public virtual ICollection<Actor> Actors { get; set; }
     }
 }

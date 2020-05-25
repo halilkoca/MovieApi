@@ -1,14 +1,20 @@
+using App.Core.DependencyResolvers;
+using App.Core.Extensions;
+using App.Core.Utilities.IoC;
+using App.Core.Utilities.Jwt;
+using App.Core.Utilities.Security;
 using App.Data;
+using App.Service.DependencyResolvers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
-using System;
-using System.Linq;
+using Microsoft.IdentityModel.Tokens;
+using System.IO;
+using System.Text.Json.Serialization;
 
 namespace App.Api
 {
@@ -21,36 +27,54 @@ namespace App.Api
 
         public IConfiguration _configuration { get; }
 
-
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSwaggerGen(c =>
+
+            services.AddCors(options =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Version = "v1",
-                    Title = "Movie API",
-                    Description = "Movie Web API",
-                    Contact = new OpenApiContact
-                    {
-                        Name = "Halil Koca",
-                        Email = string.Empty,
-                        Url = new Uri("http://halilkoca.com"),
-                    }
-                });
-                c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+                options.AddPolicy("AllowOrigin",
+                    builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             });
 
-            services.AddControllers();
-
             services.AddDbContext<InMemoryContext>(options => options.UseInMemoryDatabase(databaseName: "InMemory"));
+
+            var tokenOptions = _configuration.GetSection("TokenOptions").Get<TokenOptions>();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidIssuer = tokenOptions.Issuer,
+                        ValidAudience = tokenOptions.Audience,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey)
+                    };
+                });
+
+            services.AddControllers()
+                .AddJsonOptions(options =>
+             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
+            services.AddDependencyResolvers(_configuration, new ICoreModule[]
+            {
+                new ServiceModule(),
+                new CoreModule()
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseSwagger();
+            // global cors policy
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
 
+            app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
@@ -61,19 +85,16 @@ namespace App.Api
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.UseHsts();
-            }
 
             app.UseStaticFiles();
-
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }

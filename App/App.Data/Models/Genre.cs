@@ -1,4 +1,5 @@
 ﻿using App.Core;
+using App.Core.DbTrackers;
 using System.ComponentModel.DataAnnotations;
 
 namespace App.Data.Models

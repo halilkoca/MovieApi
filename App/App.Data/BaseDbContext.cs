@@ -1,9 +1,7 @@
-﻿using App.Data.Models;
+﻿using App.Core.Entities;
+using App.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace App.Data
 {
@@ -37,14 +35,28 @@ namespace App.Data
         }
 
         public DbSet<User> User { get; set; }
+        public DbSet<OperationClaim> OperationClaim { get; set; }
         public DbSet<Movie> Movie { get; set; }
         public DbSet<Genre> Genre { get; set; }
         public DbSet<Actor> Actor { get; set; }
 
-        public void asd()
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
-        }
+            base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Movie>()
+               .HasMany(c => c.Actors);
+
+            modelBuilder.Entity<Actor>()
+               .HasMany(c => c.Movies);
+
+            modelBuilder.Entity<Movie>()
+               .HasMany(c => c.Genres);
+
+            modelBuilder.Entity<User>()
+               .HasMany(c => c.OperationClaims);
+
+
+        }
     }
 }
