@@ -1,4 +1,6 @@
-﻿using App.Core.DbTrackers;
+﻿using App.Core.Aspects.Authorization;
+using App.Core.Aspects.Caching;
+using App.Core.DbTrackers;
 using App.Core.Response;
 using App.Data.Models;
 using App.Entity.Enum;
@@ -56,6 +58,8 @@ namespace App.Service.Pack
             return new ServiceResponse<Actor>(actor, true);
         }
 
+        [AuthorizationAspect("IUserManager.AddAsync")]
+        [CacheRemoveAspect("IUserManager.Get")]
         public async Task<ServiceResponse<Actor>> Insert(Actor actor)
         {
             var nactor = _actorRepo.Table.FirstOrDefault(x => x.FullName == actor.FullName);
