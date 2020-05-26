@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace App.Service
+namespace App.Service.Pack
 {
     public interface IUserService
     {
@@ -25,6 +25,7 @@ namespace App.Service
             _userRepo = userRepo;
             _userClaimRepo = userClaimRepo;
         }
+
         public async Task<ServiceResponse<User>> GetUser(string email)
         {
             return new ServiceResponse<User>(await _userRepo.Table.Include(a => a.UserClaims).ThenInclude(b => b.OClaim).FirstOrDefaultAsync(x => x.Email == email), true);
@@ -41,6 +42,7 @@ namespace App.Service
             return new ServiceResponse<User>(user, true);
         }
 
+        
         public async Task<ServiceResponse<User>> InsertUser(User user)
         {
             var nUser = _userRepo.Table.FirstOrDefault(x => x.Email == user.Email);

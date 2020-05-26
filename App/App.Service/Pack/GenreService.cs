@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace App.Service
+namespace App.Service.Pack
 {
     public interface IGenreService
     {

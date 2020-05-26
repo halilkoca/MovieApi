@@ -11,7 +11,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace App.Core.DependencyResolvers
 {
@@ -19,10 +18,9 @@ namespace App.Core.DependencyResolvers
     {
         public void Load(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddTransient<ITokenHelper, JwtHelper>();
-
             services.AddMemoryCache();
             services.AddSingleton<ICacheManager, MemoryCacheManager>();
+            services.AddTransient<ITokenHelper, JwtHelper>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<Stopwatch>();
 

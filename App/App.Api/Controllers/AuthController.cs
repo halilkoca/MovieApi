@@ -3,7 +3,7 @@ using App.Core.Response;
 using App.Core.Utilities.Jwt;
 using App.Core.Utilities.Security;
 using App.Entity;
-using App.Service;
+using App.Service.Pack;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;

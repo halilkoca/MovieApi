@@ -1,4 +1,5 @@
 using App.Data;
+using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -12,22 +13,20 @@ namespace App.Api
         {
             var host = CreateHostBuilder(args).Build();
 
+            // seed data
             using (var scope = host.Services.CreateScope())
             {
-                // Get the instance of DbContext in our services layer
                 var services = scope.ServiceProvider;
                 var context = services.GetRequiredService<BaseDbContext>();
-
-                // Call the DataGenerator to create sample data
                 DataGenerator.Initialize(services);
             }
 
-            //Continue to run the application
             host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

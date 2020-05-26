@@ -5,10 +5,10 @@ using System.Linq;
 
 namespace App.Core.Aspects.Logging
 {
-    public class Logger : IInterceptor
+    public class LogAspect : IInterceptor
     {
         TextWriter writer;
-        public Logger(TextWriter writer)
+        public LogAspect(TextWriter writer)
         {
             if (writer == null)
             {

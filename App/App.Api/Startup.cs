@@ -1,3 +1,5 @@
+using App.Core.CrossCuttingConcerns.Caching;
+using App.Core.CrossCuttingConcerns.Caching.Memory;
 using App.Core.DependencyResolvers;
 using App.Core.Extensions;
 using App.Core.Middleware;
@@ -6,6 +8,8 @@ using App.Core.Utilities.Jwt;
 using App.Core.Utilities.Security;
 using App.Data;
 using App.Service.DependencyResolvers;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,8 +18,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.IO;
 using System.Text.Json.Serialization;
 
 namespace App.Api
@@ -28,6 +30,7 @@ namespace App.Api
         }
 
         public IConfiguration _configuration { get; }
+        public ILifetimeScope AutofacContainer { get; private set; }
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -62,12 +65,17 @@ namespace App.Api
 
             services.AddDependencyResolvers(_configuration, new ICoreModule[]
             {
-                new ServiceModule(),
-                new CoreModule()
+                new CoreModule(),
+                new ServiceModule()
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterModule(new AutofacCoreModule(_configuration));
+            builder.RegisterModule(new AutofacDataModule());
+        }
+
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             // global cors policy

@@ -1,4 +1,5 @@
-﻿using App.Core.DbTrackers;
+﻿using App.Core.Aspects.Caching;
+using App.Core.DbTrackers;
 using App.Core.Response;
 using App.Data.Models;
 using App.Entity.Enum;
@@ -10,12 +11,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace App.Service
+namespace App.Service.Pack
 {
     public interface IMovieService
     {
 
         Task<ServiceResponse<Movie>> Get(int id);
+        Task<DateTime> Saat();
         Task<ServiceResponse<List<Movie>>> Get(MovieFilter request);
         Task<ServiceResponse<Movie>> Insert(Movie movie);
         ServiceResponse<Movie> Update(Movie Movie);
@@ -37,6 +39,7 @@ namespace App.Service
             _movieGenreRepo = movieGenreRepo;
         }
 
+        [CacheAspect(60)]
         public async Task<ServiceResponse<Movie>> Get(int id)
         {
             var movie = await _movieRepo.Table
@@ -45,6 +48,7 @@ namespace App.Service
                 .FirstOrDefaultAsync(x => x.Id == id);
             return new ServiceResponse<Movie>(movie, true);
         }
+
 
         public async Task<ServiceResponse<List<Movie>>> Get(MovieFilter model)
         {
@@ -61,6 +65,7 @@ namespace App.Service
             return new ServiceResponse<List<Movie>>(response, true);
         }
 
+        [CacheRemoveAspect("GetMovie")]
         public ServiceResponse<Movie> Update(Movie movie)
         {
             var nMovie = _movieRepo.Get(x => x.Id == movie.Id);
@@ -72,6 +77,7 @@ namespace App.Service
             return new ServiceResponse<Movie>(movie, true);
         }
 
+        [CacheRemoveAspect("GetMovie")]
         public async Task<ServiceResponse<Movie>> Insert(Movie movie)
         {
             var nMovie = _movieRepo.Table.FirstOrDefault(x => x.Title == movie.Title);
@@ -112,5 +118,10 @@ namespace App.Service
             return new ServiceResponse<bool>(true, "Deleted");
         }
 
+        [CacheAspect]
+        public async Task<DateTime> Saat()
+        {
+            return DateTime.Now;
+        }
     }
 }

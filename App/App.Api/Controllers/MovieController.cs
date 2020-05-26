@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using App.Core.Response;
 using App.Data.Models;
 using App.Entity.Filters;
-using App.Service;
+using App.Service.Pack;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Api.Controllers
@@ -38,6 +39,12 @@ namespace App.Api.Controllers
         public async Task<ServiceResponse<Movie>> Get(int id)
         {
             return await _movieService.Get(id);
+        }
+
+        [HttpGet("Saat")]
+        public async Task<DateTime> Saat()
+        {
+            return await _movieService.Saat();
         }
     }
 }
