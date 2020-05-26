@@ -49,7 +49,6 @@ namespace App.Service.Pack
             return new ServiceResponse<Movie>(movie, true);
         }
 
-
         public async Task<ServiceResponse<List<Movie>>> Get(MovieFilter model)
         {
             ExpressionStarter<Movie> expression = PredicateBuilder.New<Movie>(true);
@@ -115,6 +114,9 @@ namespace App.Service.Pack
             if (nMovie == null)
                 return new ServiceResponse<bool>(false, "MovieDoesntExist");
             _movieRepo.Delete(nMovie);
+
+            //TODO remove actors and genres
+
             return new ServiceResponse<bool>(true, "Deleted");
         }
 
